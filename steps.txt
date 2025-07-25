@@ -1,0 +1,10 @@
+
+
+
+////////////// REDUX STEPS //////////////
+
+1. DEFINE ACTION TYPES
+2. DEFINE ACTION        ---action defines whats need to change
+3. DEFINE REDUCER       ---reducer defines how the work should be done
+4. DISPATCH             ---use to send data to redux to use it in reducer based on the type. 
+5. SELECTORS            ---use to read data from redux 
