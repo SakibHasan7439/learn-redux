@@ -1,16 +1,19 @@
-import { Form, 
-         Input, 
-         Select, 
-         Button,  
-         DatePicker, 
-         InputNumber, 
-         Mentions,
-         message,
-        } from 'antd';
+import {
+  Form,
+  Input,
+  Select,
+  Button,
+  DatePicker,
+  InputNumber,
+  Mentions,
+  message,
+  Radio,
+} from "antd";
 
-import { useForm } from 'antd/es/form/Form';
-import { useDispatch, useSelector } from 'react-redux';
-import { add_todo } from './Redux/Todo-actions/todoAction';
+import { useForm } from "antd/es/form/Form";
+import { useDispatch, useSelector } from "react-redux";
+import { add_todo } from "./Redux/Todo-actions/todoAction";
+import DisplayData from "./Display/DisplayData";
 
 function App() {
   const [form] = useForm();
@@ -18,89 +21,103 @@ function App() {
   const todos = useSelector((state) => state.todos);
   // const [allTodos, setAllTodos] = useState([]);
   const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 6 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 14 },
-  },
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 6 },
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 14 },
+    },
   };
 
-  const handleSubmitForm = (values) =>{
+  const handleSubmitForm = (values) => {
+    const todo = {
+      date:  values.date ? values.date.format('YYYY-MM-DD') : null,
+      ...values
+    };
+
     try {
-      dispatch(add_todo({
-      id: Date.now(),
-      ...values,
-    }));
+      dispatch(
+        add_todo({
+          id: Date.now(),
+          ...todo,
+        })
+      );
 
-    message.success("Data successfully submitted in the store");   
-    
-    form.resetFields();
+      message.success("Data successfully submitted in the store");
 
+      form.resetFields();
     } catch (error) {
       message.error("Error found: ", error.message);
     }
-  }
+  };
 
   console.log("Values are: ", todos);
 
   return (
     <>
-      <div>This is our redux project</div>
+      <div className="display-title">This is our redux project</div>
       <Form
         {...formItemLayout}
         form={form}
         onFinish={handleSubmitForm}
-        style={{ maxWidth: 600 }}      >
-
+        style={{ maxWidth: 600 }}
+      >
         <Form.Item
-          label="Input"
-          name="Input"
+          label="User Name"
+          name="userName"
           rules={[{ required: true, message: "Please input!" }]}
         >
           <Input />
         </Form.Item>
 
         <Form.Item
-          label="InputNumber"
-          name="InputNumber"
+          label="User phone Number"
+          name="userNumber"
           rules={[{ required: true, message: "Please input!" }]}
         >
           <InputNumber style={{ width: "100%" }} />
         </Form.Item>
 
         <Form.Item
-          label="TextArea"
-          name="TextArea"
+          label="User Description"
+          name="description"
           rules={[{ required: true, message: "Please input!" }]}
         >
           <Input.TextArea />
         </Form.Item>
 
         <Form.Item
-          label="Mentions"
-          name="Mentions"
-          rules={[{ required: true, message: "Please input!" }]}
+          label="Any Reference"
+          name="reference"
         >
-          <Mentions />
+          <Radio.Group
+          name="reference"
+          defaultValue={1}
+          options={[
+            { value: 1, label: "Referenced" },
+            { value: 2, label: "No Referenced" },
+          ]}
+        />
+          
         </Form.Item>
 
         <Form.Item
-          label="Select"
-          name="Select"
-          rules={[{ message: "Please input!" }]}
+          label="Position to Apply"
+          name="position"
+          rules={[{ required: true, message: "Please input!" }]} // added required
         >
-            <Select.Option value="sample">Pabna</Select.Option>
-            <Select.Option value="sample">Barishal</Select.Option>
-            <Select.Option value="sample">Middle of none</Select.Option>
-          <Select />
+          <Select>
+            <Select.Option value="frontend">Frontend</Select.Option>
+            <Select.Option value="backend">Backend</Select.Option>
+            <Select.Option value="fullStack">FullStack</Select.Option>
+          </Select>
         </Form.Item>
 
         <Form.Item
-          label="DatePicker"
-          name="DatePicker"
+          label="Apply Date"
+          name="date"
           rules={[{ required: true, message: "Please input!" }]}
         >
           <DatePicker />
@@ -112,6 +129,11 @@ function App() {
           </Button>
         </Form.Item>
       </Form>
+
+      {/* show data in tabular format with pagination */}
+      <div>
+        <DisplayData todos={todos} />
+      </div>
     </>
   );
 }
