@@ -1,4 +1,4 @@
-import { ADD_TODO, DELETE_TODO, UPDATE_TODO } from "../Action-Types/actionTypes";
+import { ADD_TODO, DELETE_TODO, UPDATE_TODO, UPDATE_TODO_STATUS } from "../Action-Types/actionTypes";
 
 const initial_state = {
     todos: []
@@ -21,7 +21,14 @@ export const todo_reducer = (state=initial_state, action) =>{
             return {
                 ...state,
                 todos: state.todos.map((todo)=> {
-                    todo.id === action.payload.id ? {...todo, ...action.payload} : todo
+                    return todo.id === action.payload.id ? {...todo, ...action.payload} : todo
+                })
+            }
+        case UPDATE_TODO_STATUS:
+            return {
+                ...state,
+                todos: state.todos.map((todo)=>{
+                    return todo.id === action.payload.id ? {...todo, status:action.payload.status}:todo
                 })
             }
         default:

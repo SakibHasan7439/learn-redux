@@ -1,4 +1,4 @@
-import { ADD_TODO, DELETE_TODO, UPDATE_TODO } from "../Action-Types/actionTypes";
+import { ADD_TODO, DELETE_TODO, UPDATE_TODO, UPDATE_TODO_STATUS } from "../Action-Types/actionTypes";
 
 export const add_todo = (text) => {
     return {
@@ -20,3 +20,10 @@ export const update_todo = (id, updatedField) => {
         payload: { id, ...updatedField }
     }
 };
+
+export const update_todo_status = (id, status) =>{
+    return {
+        type: UPDATE_TODO_STATUS,
+        payload: { id, status }
+    }
+}

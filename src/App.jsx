@@ -39,11 +39,11 @@ function App() {
   }
   console.log("unique id is: ", todoId);
 
-  const editTodo = todos.find((todo) => todo.id === todoId);
-  
+  const editTodo = todos.find((todo) => todo?.id === todoId);
+  console.log("current todo is are: ", editTodo);
 
   useEffect(() => {
-    if (editTodo) {
+    if (editTodo && todoId) {
       form.setFieldsValue({
         ...editTodo,
         date: editTodo.date ? dayjs(editTodo.date) : null,
@@ -59,22 +59,24 @@ function App() {
       ...values,
     };
 
-    if (todoId) {
+    if (todoId && editTodo) {
       dispatch(update_todo(todoId, todo));
       message.success("Todo updated successfully");
       setTodoId(null);
+      form.resetFields();
     } else {
       try {
         dispatch(
           add_todo({
             id: Date.now(),
+            status: "pending",
             ...todo,
           })
         );
 
         message.success("Data successfully submitted in the store");
-
         form.resetFields();
+
       } catch (error) {
         message.error("Error found: ", error.message);
       }
