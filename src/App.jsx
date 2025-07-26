@@ -5,14 +5,13 @@ import {
   Button,
   DatePicker,
   InputNumber,
-  Mentions,
   message,
   Radio,
 } from "antd";
 
 import { useForm } from "antd/es/form/Form";
 import { useDispatch, useSelector } from "react-redux";
-import { add_todo, update_todo } from "./Redux/Todo-actions/todoAction";
+import { add_todo, read_todo, update_todo } from "./Redux/Todo-actions/todoAction";
 import DisplayData from "./Display/DisplayData";
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
@@ -37,10 +36,8 @@ function App() {
   const provideId = (id) =>{
     setTodoId(id);
   }
-  console.log("unique id is: ", todoId);
 
   const editTodo = todos.find((todo) => todo?.id === todoId);
-  console.log("current todo is are: ", editTodo);
 
   useEffect(() => {
     if (editTodo && todoId) {
@@ -53,10 +50,16 @@ function App() {
     }
   }, [editTodo, form]);
 
+  useEffect(()=>{
+    dispatch(read_todo());
+  })
+
   const handleSubmitForm = (values) => {
+    const formattedDate = values.date ? dayjs(values.date).format("YYYY-MM-DD") : null;
+    console.log("formatted date is: ", formattedDate);
     const todo = {
-      date: values.date ? values.date.format("YYYY-MM-DD") : null,
       ...values,
+      date: formattedDate,
     };
 
     if (todoId && editTodo) {
@@ -68,7 +71,6 @@ function App() {
       try {
         dispatch(
           add_todo({
-            id: Date.now(),
             status: "pending",
             ...todo,
           })
