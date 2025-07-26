@@ -2,7 +2,7 @@ import { message, Space, Table } from "antd";
 import { useDispatch } from "react-redux";
 import { delete_todo } from "../Redux/Todo-actions/todoAction";
 
-const DisplayData = ({ todos }) => {
+const DisplayData = ({ todos, provideId }) => {
     const dispatch = useDispatch();
     //handle delete todo
     const handleDeleteTodo = (id) =>{
@@ -17,6 +17,8 @@ const DisplayData = ({ todos }) => {
             console.log("Error message: ", error.message);
         }
     }   
+
+
 
   const columns = [
     {
@@ -51,9 +53,21 @@ const DisplayData = ({ todos }) => {
           <a 
             onClick={()=>handleDeleteTodo(record.id)}
           >Delete</a>
+           <a 
+            onClick={()=>provideId(record.id)}
+          >Update</a>
         </Space>
       ),
     },
+    // {
+    //   title: "Action",
+    //   key: "action",
+    //   render: (_, record) => (
+    //     <Space size="middle">
+         
+    //     </Space>
+    //   ),
+    // },
   ];
 
 

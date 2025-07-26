@@ -14,9 +14,9 @@ export const delete_todo = (id) => {
     };
 };
 
-export const update_todo = (id, text) => {
+export const update_todo = (id, updatedField) => {
     return {
         type: UPDATE_TODO,
-        payload: { id, text }
+        payload: { id, ...updatedField }
     }
 };

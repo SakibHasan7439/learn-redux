@@ -12,14 +12,16 @@ import {
 
 import { useForm } from "antd/es/form/Form";
 import { useDispatch, useSelector } from "react-redux";
-import { add_todo } from "./Redux/Todo-actions/todoAction";
+import { add_todo, update_todo } from "./Redux/Todo-actions/todoAction";
 import DisplayData from "./Display/DisplayData";
+import { useEffect, useState } from "react";
+import dayjs from "dayjs";
 
 function App() {
   const [form] = useForm();
   const dispatch = useDispatch();
   const todos = useSelector((state) => state.todos);
-  // const [allTodos, setAllTodos] = useState([]);
+  const [todoId, setTodoId] = useState(null);
   const formItemLayout = {
     labelCol: {
       xs: { span: 24 },
@@ -31,25 +33,51 @@ function App() {
     },
   };
 
+  // function to get a specific todo id
+  const provideId = (id) =>{
+    setTodoId(id);
+  }
+  console.log("unique id is: ", todoId);
+
+  const editTodo = todos.find((todo) => todo.id === todoId);
+  
+
+  useEffect(() => {
+    if (editTodo) {
+      form.setFieldsValue({
+        ...editTodo,
+        date: editTodo.date ? dayjs(editTodo.date) : null,
+      });
+    } else {
+      form.resetFields();
+    }
+  }, [editTodo, form]);
+
   const handleSubmitForm = (values) => {
     const todo = {
-      date:  values.date ? values.date.format('YYYY-MM-DD') : null,
-      ...values
+      date: values.date ? values.date.format("YYYY-MM-DD") : null,
+      ...values,
     };
 
-    try {
-      dispatch(
-        add_todo({
-          id: Date.now(),
-          ...todo,
-        })
-      );
+    if (todoId) {
+      dispatch(update_todo(todoId, todo));
+      message.success("Todo updated successfully");
+      setTodoId(null);
+    } else {
+      try {
+        dispatch(
+          add_todo({
+            id: Date.now(),
+            ...todo,
+          })
+        );
 
-      message.success("Data successfully submitted in the store");
+        message.success("Data successfully submitted in the store");
 
-      form.resetFields();
-    } catch (error) {
-      message.error("Error found: ", error.message);
+        form.resetFields();
+      } catch (error) {
+        message.error("Error found: ", error.message);
+      }
     }
   };
 
@@ -88,19 +116,15 @@ function App() {
           <Input.TextArea />
         </Form.Item>
 
-        <Form.Item
-          label="Any Reference"
-          name="reference"
-        >
+        <Form.Item label="Any Reference" name="reference">
           <Radio.Group
-          name="reference"
-          defaultValue={1}
-          options={[
-            { value: 1, label: "Referenced" },
-            { value: 2, label: "No Referenced" },
-          ]}
-        />
-          
+            name="reference"
+            defaultValue={1}
+            options={[
+              { value: 1, label: "Referenced" },
+              { value: 2, label: "No Referenced" },
+            ]}
+          />
         </Form.Item>
 
         <Form.Item
@@ -125,14 +149,19 @@ function App() {
 
         <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
           <Button type="primary" htmlType="submit">
-            Submit
+            {
+              todoId ? "Update" : "Add Todo"
+            }
           </Button>
         </Form.Item>
       </Form>
 
       {/* show data in tabular format with pagination */}
       <div>
-        <DisplayData todos={todos} />
+        <DisplayData 
+          todos={todos} 
+          provideId={provideId} 
+        />
       </div>
     </>
   );
